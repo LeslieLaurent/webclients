@@ -24,4 +24,4 @@ jobs:
             /home/etudiant/.bun/bin/bun install
             /home/etudiant/.bun/bin/bun run build
             sudo /usr/bin/systemctl restart webclients
-            sudo /usr/bin/systemctl status webclients --no-pager
+            /usr/bin/systemctl is-active webclients
