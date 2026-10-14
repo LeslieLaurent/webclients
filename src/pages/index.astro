@@ -1,5 +1,16 @@
 ---
 import { getClients } from "../lib/db.js";
+import { auth } from "../auth";
+
+// Vérification de la session Better Auth
+const session = await auth.api.getSession({
+  headers: Astro.request.headers,
+});
+
+// Pas connecté = direction page de connexion
+if (!session) {
+  return Astro.redirect("/login");
+}
 
 const clients = getClients();
 
@@ -17,9 +28,12 @@ const locationsCount = clients.filter(
 ---
 
 <!doctype html>
+
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8" />
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
@@ -56,6 +70,7 @@ const locationsCount = clients.filter(
       margin: 0;
       background: var(--background);
       color: var(--text);
+
       font-family:
         Inter,
         ui-sans-serif,
@@ -76,9 +91,11 @@ const locationsCount = clients.filter(
        ========================= */
 
     .topbar {
-      height: 72px;
+      min-height: 72px;
+
       background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(12px);
+
       border-bottom: 1px solid var(--border);
 
       display: flex;
@@ -101,6 +118,7 @@ const locationsCount = clients.filter(
     .brand-icon {
       width: 42px;
       height: 42px;
+
       border-radius: 12px;
 
       display: grid;
@@ -124,6 +142,8 @@ const locationsCount = clients.filter(
       margin-top: 2px;
     }
 
+    /* UTILISATEUR CONNECTÉ */
+
     .user-area {
       display: flex;
       align-items: center;
@@ -142,13 +162,18 @@ const locationsCount = clients.filter(
     .user-email {
       color: var(--muted);
       font-size: 12px;
+      margin-top: 2px;
     }
 
     .logout {
       padding: 9px 14px;
+
       border: 1px solid var(--border);
       border-radius: 10px;
+
       background: white;
+
+      cursor: pointer;
 
       font-size: 13px;
       font-weight: 600;
@@ -200,6 +225,7 @@ const locationsCount = clients.filter(
 
     .stat-card {
       background: var(--card);
+
       border: 1px solid var(--border);
       border-radius: var(--radius);
 
@@ -244,6 +270,7 @@ const locationsCount = clients.filter(
 
     .map-card {
       background: var(--card);
+
       border: 1px solid var(--border);
       border-radius: var(--radius);
 
@@ -280,6 +307,7 @@ const locationsCount = clients.filter(
       gap: 7px;
 
       color: var(--success);
+
       font-size: 12px;
       font-weight: 600;
     }
@@ -287,6 +315,7 @@ const locationsCount = clients.filter(
     .status-dot {
       width: 8px;
       height: 8px;
+
       border-radius: 50%;
       background: var(--success);
     }
@@ -302,6 +331,7 @@ const locationsCount = clients.filter(
 
     .clients-card {
       background: var(--card);
+
       border: 1px solid var(--border);
       border-radius: var(--radius);
 
@@ -330,8 +360,10 @@ const locationsCount = clients.filter(
       background: #fafbfc;
 
       color: var(--muted);
+
       font-size: 11px;
       font-weight: 700;
+
       text-transform: uppercase;
       letter-spacing: 0.5px;
 
@@ -340,6 +372,7 @@ const locationsCount = clients.filter(
 
     td {
       padding: 15px 22px;
+
       border-top: 1px solid var(--border);
 
       font-size: 13px;
@@ -422,7 +455,7 @@ const locationsCount = clients.filter(
 
     @media (max-width: 800px) {
       .topbar {
-        padding: 0 16px;
+        padding: 12px 16px;
       }
 
       .user-info {
@@ -451,14 +484,17 @@ const locationsCount = clients.filter(
 <body>
 
   <!-- HEADER -->
+
   <header class="topbar">
 
     <div class="brand">
+
       <div class="brand-icon">
         📍
       </div>
 
       <div>
+
         <div class="brand-title">
           Clients
         </div>
@@ -466,10 +502,41 @@ const locationsCount = clients.filter(
         <div class="brand-subtitle">
           Gestion géographique
         </div>
+
       </div>
+
+    </div>
+
+
+    <!-- UTILISATEUR GOOGLE CONNECTÉ -->
+
+    <div class="user-area">
+
+      <div class="user-info">
+
+        <div class="user-name">
+          {session.user.name ?? "Utilisateur"}
+        </div>
+
+        <div class="user-email">
+          {session.user.email}
+        </div>
+
+      </div>
+
+      <button
+        id="logout"
+        class="logout"
+        type="button"
+      >
+        Se déconnecter
+      </button>
+
     </div>
 
   </header>
+
+
   <main>
 
     <!-- INTRODUCTION -->
@@ -498,6 +565,7 @@ const locationsCount = clients.filter(
         </div>
 
         <div>
+
           <div class="stat-value">
             {clientCount}
           </div>
@@ -505,6 +573,7 @@ const locationsCount = clients.filter(
           <div class="stat-label">
             Clients
           </div>
+
         </div>
 
       </div>
@@ -517,6 +586,7 @@ const locationsCount = clients.filter(
         </div>
 
         <div>
+
           <div class="stat-value">
             {locationsCount}
           </div>
@@ -524,6 +594,7 @@ const locationsCount = clients.filter(
           <div class="stat-label">
             Localisations
           </div>
+
         </div>
 
       </div>
@@ -536,6 +607,7 @@ const locationsCount = clients.filter(
         </div>
 
         <div>
+
           <div class="stat-value">
             {emailsCount}
           </div>
@@ -543,6 +615,7 @@ const locationsCount = clients.filter(
           <div class="stat-label">
             Contacts avec email
           </div>
+
         </div>
 
       </div>
@@ -613,6 +686,7 @@ const locationsCount = clients.filter(
 
           </thead>
 
+
           <tbody>
 
             {clients.map((client) => (
@@ -620,20 +694,27 @@ const locationsCount = clients.filter(
               <tr>
 
                 <td>
+
                   <div class="client-name">
                     {client.name}
                   </div>
+
                 </td>
 
+
                 <td>
+
                   <div class="client-email">
                     {client.email ?? "—"}
                   </div>
+
                 </td>
+
 
                 <td>
                   {client.address ?? "—"}
                 </td>
+
 
                 <td>
 
@@ -643,6 +724,7 @@ const locationsCount = clients.filter(
                   </span>
 
                 </td>
+
 
                 <td>
 
@@ -679,10 +761,6 @@ const locationsCount = clients.filter(
 
     /*
      * Création de la carte.
-     *
-     * On ne fixe volontairement PAS un zoom élevé.
-     * fitBounds() déterminera automatiquement le niveau
-     * de zoom nécessaire pour afficher tous les clients.
      */
 
     const map = L.map("map", {
@@ -762,8 +840,6 @@ const locationsCount = clients.filter(
 
     /*
      * Ajustement automatique de la carte.
-     *
-     * padding ajoute une marge autour des marqueurs.
      */
 
     if (bounds.length === 1) {
@@ -785,11 +861,6 @@ const locationsCount = clients.filter(
 
     } else {
 
-      /*
-       * Aucun client géolocalisé :
-       * affichage par défaut sur la France.
-       */
-
       map.setView(
         [46.6, 2.5],
         6
@@ -799,8 +870,7 @@ const locationsCount = clients.filter(
 
 
     /*
-     * Protection minimale contre l'injection HTML
-     * dans les informations des clients.
+     * Protection minimale contre l'injection HTML.
      */
 
     function escapeHtml(value) {
@@ -816,5 +886,23 @@ const locationsCount = clients.filter(
 
   </script>
 
+
+  <!-- DÉCONNEXION -->
+
+  <script>
+    const logoutButton = document.getElementById("logout");
+
+    logoutButton?.addEventListener("click", async () => {
+
+      await fetch("/api/auth/sign-out", {
+        method: "POST",
+      });
+
+      window.location.href = "/login";
+
+    });
+  </script>
+
 </body>
+
 </html>
