@@ -1,12 +1,12 @@
 import { betterAuth } from "better-auth";
 
 export const auth = betterAuth({
-  baseURL: import.meta.env.BETTER_AUTH_URL,
+  baseURL: process.env.BETTER_AUTH_URL,
 
   socialProviders: {
     google: {
-      clientId: import.meta.env.GOOGLE_CLIENT_ID,
-      clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
 });
