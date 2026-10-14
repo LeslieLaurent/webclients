@@ -887,20 +887,22 @@ const locationsCount = clients.filter(
   </script>
 
 
-  <!-- DÉCONNEXION -->
-
 <script>
   import { authClient } from "../lib/auth-client";
 
   const logoutButton = document.getElementById("logout");
 
   logoutButton?.addEventListener("click", async () => {
-    await authClient.signOut({
-      callbackURL: "/login",
-    });
+    const { error } = await authClient.signOut();
+
+    if (error) {
+      console.error("Erreur de déconnexion :", error);
+      return;
+    }
+
+    window.location.href = "/login";
   });
 </script>
-
 </body>
 
 </html>
